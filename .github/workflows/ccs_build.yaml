@@ -8,7 +8,7 @@ jobs:
   build:
     name: Build CCS Tarball
 
-    runs-on: [self-hosted, onprem-platform]
+    runs-on: self-hosted
 
     steps:
       - name: Dump Environment Variables for Debugging
