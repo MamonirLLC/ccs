@@ -54,7 +54,13 @@ jobs:
       
   release-package:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repos: [  MamonirLLC/ccs,  MamonirLLC/dscc] 
+        token: ${{ secrets.YOUR_PAT_SECRET }}
+        
     needs: get-tag-version 
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
