@@ -23,7 +23,8 @@ jobs:
           git checkout -b feature/feature-name origin/Release/v1.0
           git fetch --all
           git fetch origin main
-          git log main
+          git log main --oneline 1e6ae41da854b8e6e793f33fa3c63c3ef2575bca
+          git rev-parse 1e6ae41da854b8e6e793f33fa3c63c3ef2575bca
           echo "yaha tk"
           git cherry-pick 1e6ae41da854b8e6e793f33fa3c63c3ef2575bca
           git push origin feature/feature-name
