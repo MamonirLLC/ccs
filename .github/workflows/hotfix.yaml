@@ -21,6 +21,7 @@ jobs:
         run: |
           commit_ids="${{ github.event.inputs.commit_ids }}"
           git fetch
-          git checkout -b feature/feature-name remote/origin/Release/v1.0
+          git branch -a
+          git checkout -b feature/feature-name origin/Release/v1.0
           git cherry-pick $commit_ids
           git push origin feature/feature-name
