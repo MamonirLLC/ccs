@@ -26,28 +26,21 @@ jobs:
   #         git log main 
   #         git show 1e6ae41da854b8e6e793f33fa3c63c3ef2575bca
   #         echo "yaha tk"
-  #         git cherry-pick 1e6ae41da854b8e6e793f33fa3c63c3ef2575bca
+  #         git cherry-pick 1e6ae41da854b8e6e7f33fa3c63c3ef2575bca
   #         git push origin feature/feature-name
 
   create_pull_request:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Create PR
-        uses: actions/github-script@v5
-        with:
-          github-token: ${{ secrets.TOKEN }}
-          script: |
-            const { context, github } = require('@actions/github');
-            const branch = context.ref.split('/').pop();
-            const pr = await github.pulls.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: ⁠ Hotfix for release/${branch} ⁠,
-              head: ⁠ Release/v1.0 ⁠,
-              base: ⁠ Release/v2.0 ⁠,
-              body: ⁠ This PR contains hotfix changes for release/${branch}. ⁠
-            });
-            console.log(⁠ Pull request created: ${pr.data.html_url} ⁠); 
+    - name: Create PR
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{ secrets.TOKEN }}
+        branch: Release/v2.0
+        base: Release/v1.0
+        title: "Hotfix for release/1.0"
+        body: |
+          This PR contains hotfix changes for release/1.0.
