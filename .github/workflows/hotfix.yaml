@@ -20,8 +20,8 @@ jobs:
       - name: Merge Commits
         run: |
           commit_ids="${{ github.event.inputs.commit_ids }}"
-          git fetch --all
-          git branch -a
           git checkout -b feature/feature-name origin/Release/v1.0
+          git fetch --all
+          git fetch main
           git cherry-pick 1e6ae41da854b8e6e793f33fa3c63c3ef2575bca
           git push origin feature/feature-name
