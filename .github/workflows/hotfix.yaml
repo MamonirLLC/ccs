@@ -36,11 +36,18 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Create PR
-        uses: peter-evans/create-pull-request@v3
+        uses: actions/github-script@v5
         with:
-          token: ${{ secrets.TOKEN }}
-          branch: Release/v2.0
-          base: Release/v1.0
-          title: "Hotfix for release/1.0"
-          body: |
-            This PR contains hotfix changes for release/1.0.
+          github-token: ${{ secrets.TOKEN }}
+          script: |
+            const { context, github } = require('@actions/github');
+            const branch = context.ref.split('/').pop();
+            const pr = await github.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: ⁠ Hotfix for release/${branch} ⁠,
+              head: ⁠ Release/v1.0 ⁠,
+              base: ⁠ Release/v2.0 ⁠,
+              body: ⁠ This PR contains hotfix changes for release/${branch}. ⁠
+            });
+            console.log(⁠ Pull request created: ${pr.data.html_url} ⁠); 
