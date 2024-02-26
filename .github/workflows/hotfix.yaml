@@ -22,6 +22,6 @@ jobs:
           commit_ids="${{ github.event.inputs.commit_ids }}"
           git checkout -b feature/feature-name origin/Release/v1.0
           git fetch --all
-          git fetch main
+          git fetch origin main
           git cherry-pick 1e6ae41da854b8e6e793f33fa3c63c3ef2575bca
           git push origin feature/feature-name
