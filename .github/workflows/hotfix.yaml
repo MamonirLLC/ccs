@@ -1,0 +1,26 @@
+name: abckithegayic
+
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_ids:
+        description: 'List of commit IDs to merge (separated by comma)'
+        required: true
+
+
+jobs:
+  merge_commits:
+    runs-on: runner_160_1
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+           
+      - name: Merge Commits
+        run: |
+          commit_ids="${{ github.event.inputs.commit_ids }}"
+          git fetch
+          git checkout -b feature/feature-name remote/origin/Release/v1.0
+          git cherry-pick $commit_ids
+          git push origin feature/feature-name
