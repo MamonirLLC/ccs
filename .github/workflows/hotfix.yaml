@@ -10,6 +10,15 @@ on:
 
 
 jobs:
+  print_workflow_name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Workflow Name
+        run: |
+          a=$(git rev-parse Release/v1.0)
+          echo "hey id $a"
+          
+          
   # merge_commits:
   #   runs-on: runner_160_1
   #   steps:
@@ -29,18 +38,4 @@ jobs:
   #         git cherry-pick 1e6ae41da854b8e6e7f33fa3c63c3ef2575bca
   #         git push origin feature/feature-name
 
-  create_pull_request:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
 
-    - name: Create PR
-      uses: peter-evans/create-pull-request@v3
-      with:
-        token: ${{ secrets.TOKEN }}
-        branch: Release/v2.0
-        base: Release/v1.0
-        title: "Hotfix for release/1.0"
-        body: |
-          This PR contains hotfix changes for release/1.0.
