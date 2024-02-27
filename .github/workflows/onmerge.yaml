@@ -7,18 +7,18 @@ on:
     branches:
       - 'Release/v1.0'
 jobs:
-  check_pr_merge:
-    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/')
+  print_workflow_name:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Extract branch name
-        id: extract_branch_name
-        run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
-
-      - name: Execute script
+      - name: Print Workflow Name
         run: |
-          echo "Merged PR in branch: ${{ steps.extract_branch_name.outputs.branch_name }}"
-          # Add your script here to print commit IDs or perform any other actions
+          echo "repo ${{ github.repository }} $(echo ${GITHUB_REF#refs/heads/})"
+          git fetch
+          a=$(git rev-parse origin/Release/v1.0)
+          echo "hey id $a"
+          git show --format=%B $a
+          version=$(git show --format=%B $a | grep -oP 'version\s+\K\S+')
+          rc=$(git show --format=%B $a | grep -oP 'rc\s+\K\S+')
+          echo "hey id $a $version $rc"
