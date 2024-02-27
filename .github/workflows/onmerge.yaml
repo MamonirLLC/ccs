@@ -16,9 +16,12 @@ jobs:
         run: |
           echo "repo ${{ github.repository }} $(echo ${GITHUB_REF#refs/heads/})"
           git fetch
-          a=$(git rev-parse origin/Release/v1.0)
+          git branch 
+          a=$(git rev-parse origin/${GITHUB_REF#refs/heads/})
           echo "hey id $a"
           git show --format=%B $a
           version=$(git show --format=%B $a | grep -oP 'version\s+\K\S+')
           rc=$(git show --format=%B $a | grep -oP 'rc\s+\K\S+')
           echo "hey id $a $version $rc"
+          ls 
+          cat releasefile.txt
