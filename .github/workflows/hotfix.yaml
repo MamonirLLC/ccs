@@ -18,7 +18,7 @@ jobs:
       - name: Print Workflow Name
         run: |
           git fetch
-          a=$(git rev-parse Release/v1.0)
+          a=$(git rev-parse origin/Release/v1.0)
           echo "hey id $a"
           
           
