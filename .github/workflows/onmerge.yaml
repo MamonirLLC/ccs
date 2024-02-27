@@ -1,0 +1,24 @@
+name: Monitor PR Merges
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 'Releases/v1.0'
+jobs:
+  check_pr_merge:
+    if: github.event.pull_request.merged == true && startsWith(github.head_ref, 'release/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Extract branch name
+        id: extract_branch_name
+        run: echo "::set-output name=branch_name::$(echo ${GITHUB_REF#refs/heads/})"
+
+      - name: Execute script
+        run: |
+          echo "Merged PR in branch: ${{ steps.extract_branch_name.outputs.branch_name }}"
+          # Add your script here to print commit IDs or perform any other actions
