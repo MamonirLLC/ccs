@@ -1,0 +1,50 @@
+name: abckithegayic
+
+
+on:
+  workflow_dispatch:
+    inputs:
+      commit_ids:
+        description: 'List of commit IDs to merge (separated by comma)'
+        required: true
+
+
+jobs:
+  print_workflow_name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Print Workflow Name
+        run: |
+          echo "repo ${{ github.repository }} $(echo ${GITHUB_REF#refs/heads/})"
+          git fetch
+          a=$(git rev-parse origin/Release/v1.0)
+          echo "hey id $a"
+          git show --format=%B $a
+          version=$(git show --format=%B $a | grep -oP 'version\s+\K\S+')
+          rc=$(git show --format=%B $a | grep -oP 'rc\s+\K\S+')
+          echo "hey id $a $version $rc"
+          
+          
+          
+  # merge_commits:
+  #   runs-on: runner_160_1
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v2
+
+           
+  #     - name: Merge Commits
+  #       run: |
+  #         commit_ids="${{ github.event.inputs.commit_ids }}"
+  #         git checkout -b feature/feature-name origin/Release/v1.0
+  #         git fetch --all
+  #         git fetch origin main
+  #         git log main 
+  #         git show 1e6ae41da854b8e6e793f33fa3c63c3ef2575bca
+  #         echo "yaha tk"
+  #         git cherry-pick 1e6ae41da854b8e6e7f33fa3c63c3ef2575bca
+  #         git push origin feature/feature-name
+
+
