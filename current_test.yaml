@@ -1,3 +1,3 @@
 jenkins:
-    systemMessage: "khounish change via jscasc config yaml1"
+    systemMessage: "khounish change via jscasc config yaml"
     numExecutors: "5"
