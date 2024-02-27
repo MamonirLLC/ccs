@@ -21,8 +21,8 @@ jobs:
           a=$(git rev-parse origin/Release/v1.0)
           echo "hey id $a"
           git show --format=%B $a
-          version=$(git show --format=%B $a) | grep -oP 'version\s+\K\S+')
-          rc=$(git show --format=%B $a) | grep -oP 'rc\s+\K\S+')
+          version=$(git show --format=%B $a | grep -oP 'version\s+\K\S+')
+          rc=$(git show --format=%B $a | grep -oP 'rc\s+\K\S+')
           echo "hey id $a $version $rc"
           
           
