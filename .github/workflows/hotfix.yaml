@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Print Workflow Name
         run: |
-          get fetch
+          git fetch
           a=$(git rev-parse Release/v1.0)
           echo "hey id $a"
           
