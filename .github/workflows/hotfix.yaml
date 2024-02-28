@@ -6,7 +6,7 @@ on:
     inputs:
       commit_ids:
         description: 'List of commit IDs to merge (separated by comma)'
-        required: true
+        # required: true
 
 
 jobs:
