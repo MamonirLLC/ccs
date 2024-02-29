@@ -5,12 +5,13 @@ on:
 
 jobs:
   print_workflow_name:
-    runs-on: ubuntu-latest
+    runs-on: runner_160_1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
           ref: GLCP-163280
+          token: ${{secrets.TOKEN}}
         
 
       - name: Print Workflow Name
