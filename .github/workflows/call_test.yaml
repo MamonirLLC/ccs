@@ -17,10 +17,10 @@ jobs:
           a=$(git rev-parse origin/${GITHUB_REF#refs/heads/})
           echo "hey id $a"
           git show --format=%B $a
-          version=$(git show --format=%B $a | grep -oP 'version\s+\K\S+')
-          rc=$(git tag -l "*$version-rc*" | sort -V | tail -n 1|sed -n 's/^.*-rc\([^.]*\)\..*$/\1/p')
-          echo "hey id $a $version $rc"
           ls 
           cat GLCP-163280.txt
           chmod + ./test.sh
           ./tesh.sh
+          version=$(git show --format=%B $a | grep -oP 'version\s+\K\S+')
+          rc=$(git tag -l "*$version-rc*" | sort -V | tail -n 1|sed -n 's/^.*-rc\([^.]*\)\..*$/\1/p')
+          echo "hey id $a $version $rc"
