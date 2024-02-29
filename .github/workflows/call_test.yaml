@@ -9,6 +9,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          ref: GLCP-163280
+        
 
       - name: Print Workflow Name
         run: |
