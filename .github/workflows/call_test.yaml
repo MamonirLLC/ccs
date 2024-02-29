@@ -1,0 +1,26 @@
+name: test call
+
+on:
+  workflow_call:
+
+jobs:
+  print_workflow_name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Print Workflow Name
+        run: |
+          echo "repo ${{ github.repository }} $(echo ${GITHUB_REF#refs/heads/})"
+          git fetch
+          git branch 
+          a=$(git rev-parse origin/${GITHUB_REF#refs/heads/})
+          echo "hey id $a"
+          git show --format=%B $a
+          version=$(git show --format=%B $a | grep -oP 'version\s+\K\S+')
+          rc=$(git tag -l "*$version-rc*" | sort -V | tail -n 1|sed -n 's/^.*-rc\([^.]*\)\..*$/\1/p')
+          echo "hey id $a $version $rc"
+          ls 
+          cat GLCP-163280.txt
+          chmod + ./test.sh
+          ./tesh.sh
