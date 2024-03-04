@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: .github/workflows/mr.yaml@release/v1.0
+        uses: MamonirLLC/ccs/.github/workflows/mr.yaml@release/v1.0
         with:
           pkg_name: hehe
           folder_name: halwa
