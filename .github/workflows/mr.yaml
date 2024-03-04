@@ -1,15 +1,118 @@
-name: Merge to release/1.0
+name: OnPrem Golden Build
 
 on:
-  push:
-    branches:
-      - 'release/v1.0'
+  workflow_call:
+    inputs:
+      pkg_name:
+        type: string
+        required: true
+      folder_name:
+        type: string
+        required: true
+
+    outputs:
+      app_version:
+        description: Generated-artifact filename
+        value: ${{ if ne(needs.get-pkg-details.result, 'skipped'), jobs.get-pkg-details.outputs.app_version, jobs.artifact-server-pkg-details.outputs.app_version }}
+      artifact_path:
+        description: Generated-artifact filename
+        value: ${{ if ne(needs.get-pkg-details.result, 'skipped'), jobs.get-pkg-details.outputs.artifact_path, jobs.artifact-server-pkg-details.outputs.artifact_path }}
+      artifact_name:
+        description: Generated-artifact filename
+        value: ${{ if ne(needs.get-pkg-details.result, 'skipped'), jobs.get-pkg-details.outputs.artifact_name, jobs.artifact-server-pkg-details.outputs.artifact_name }}
+
+env:
+    url_prefix: "https://coreupdate-ro.central.arubanetworks.com/ro/packages/app"
+    manifest_app_id: "b18b554b-c777-4fc6-bfe7-19e511e6074d"
+    app_version: ''
+    location: ''
+    filename: ''
 
 jobs:
-  merge_to_release:
-    name: Merge to release/1.0
-    runs-on: ubuntu-latest
+  check-coreupdate-pkg:
+      name: Check package is present or not
+      runs-on: ubuntu-latest
+      steps:
+      - name: check coreupdate version
+        id: coreupdate_pkg
+        run: |
+          response="<h1>Not Found</h1>"
+          if [[ "$response" == *"<h1>Not Found</h1>"* ]]; then
+              echo "manifest_version_response=not_found" >> $GITHUB_ENV
+          else
+              echo "manifest_version_response=found" >> $GITHUB_ENV
+          fi
+      outputs:
+        manifest_version: ${{env.manifest_version_response}}
+
+
+  get-pkg-details:
+    name: Extract build details
+    runs-on: onprem-ccs-runner
+    needs: check-coreupdate-pkg 
+    if: |
+      always() &&
+      needs.check-coreupdate-pkg.result == 'success' &&
+      needs.check-coreupdate-pkg.outputs.manifest_version == 'found'
+
+    outputs:
+      app_version: ${{ env.app_version }}
+      artifact_path: ${{ env.location }}
+      artifact_name: ${{ env.filename }}
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - name: folder path
+        run: |
+          url=$(curl -s "${{ env.url_prefix }}/${{ env.manifest_app_id }}/channel/${{ inputs.pkg_name }}/info" | jq -r '.URL')
+          if [ -z "$url" ]; then
+            echo "Error: Unable to locate the package's manifest"
+            exit 1
+          fi
+
+          app_version=$(curl -s "$url" | yq -r '.packages[].version')
+          location=$(curl -s "$url" | yq -r '.packages[].location')
+          if [ -z "$app_version" ] || [ -z "$location" ]; then
+            echo "Error: Unable to get the package's location/version"
+            exit 1
+          fi
+
+          echo "app_version=$app_version" >> $GITHUB_ENV
+          echo "filename=$(basename "$location")" >> $GITHUB_ENV
+          echo "location=$location" >> $GITHUB_ENV
+
+  artifact-server-pkg-details:
+    name: Extract build details from server
+    runs-on: ubuntu-latest
+    needs: check-coreupdate-pkg 
+    if: |
+      always() &&
+      needs.check-coreupdate-pkg.result == 'success' &&
+      needs.check-coreupdate-pkg.outputs.manifest_version == 'not_found'
+    env:
+      ARTIFACTS_SERVER_USER: esroot
+      ARTIFACTS_SERVER: 10.14.144.118
+    steps:
+      - name: Get last release artifact from artifact server
+        run: |          
+            folder_path="/mnt/nfsshare/public_html/release/1.0/1.0.0/1.0.0-GA/${{inputs.folder_name}}/"
+            echo "location=$folder_path" >> $GITHUB_ENV
+    outputs:
+      artifact_path: ${{ env.location }}
+      artifact_name: ${{ env.filename }}
+
+  check-pkg:
+    name: Check if the package tarball exists
+    runs-on: [onprem-platform, self-hosted]
+    needs: get-pkg-details
+    env:
+        ARTIFACTS_SERVER: 10.14.144.118
+    if: always() && needs.get-pkg-details.result == 'success'
+    steps:
+      - run: |
+          ssh ${{ vars.ARTIFACTS_SERVER_USER }}@${{ env.ARTIFACTS_SERVER }} \
+          " \
+            if [ ! -f ${{ needs.get-pkg-details.outputs.artifact_path }} ]; then \
+              echo \"Error: File not found - ${{ needs.get-pkg-details.outputs.artifact_path }}\"; \
+              exit 1; \
+            fi \
+          "
