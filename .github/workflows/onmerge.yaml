@@ -2,11 +2,11 @@ name: Monitor PR Merges
 
 on:
   workflow_call:
-  # pull_request:
-  #   types:
-  #     - closed
-  #   branches:
-  #     - 'Release/v1.0'
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 'release/v1.0'
 jobs:
   print_workflow_name:
     runs-on: ubuntu-latest
