@@ -3,7 +3,7 @@ name: Merge to release/1.0
 on:
   push:
     branches:
-      - 'release/1.0'
+      - 'release/v1.0'
 
 jobs:
   merge_to_release:
