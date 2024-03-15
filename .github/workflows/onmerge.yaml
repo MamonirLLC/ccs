@@ -9,11 +9,10 @@ jobs:
 
   validate_condition_for_onpush:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.event.pull_request.head.ref == 'prerelease'
     steps:
       - name: Check  branch
         run: |
-          echo  "hello $github.event.pull_request.head.ref"
+          echo  "hello $github.event_name ${{github.event_name}} $github.event.pull_request.head.ref  ${{github.event.pull_request.head.ref}}"
           exit 1
 
   print_workflow_name:
